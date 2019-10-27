@@ -1,0 +1,9 @@
+{
+  "name": "safehome",
+  "version": "0.1.0",
+  "description": "SafeHome - Simple opensource CCTV camera view platform",
+  "main": "index.js",
+  "repository": "git@github.com:kokx/safehome.git",
+  "author": "Pieter Kokx <pieter@kokx.nl>",
+  "license": "MIT"
+}
