@@ -9,7 +9,14 @@ const app = express();
 setInterval(() => {
     request(process.env.CAMERA_URL, {encoding: 'binary'}, (_error, _response, body) => {
         date = new Date();
+
+        dir = date.getUTCFullYear() + '/'
+            + date.getUTCMonth() + '-' + date.getUTCDate() + '/'
+            + date.getUTCHours();
+
         filename = 'cam-' + date.toISOString() + '.jpg';
-        fs.writeFile('result/' + filename, body, 'binary', _ => null);
+        fs.mkdir('data/' + dir, { recursive: true }, () => {
+            fs.writeFile('data/' + dir + '/' + filename, body, 'binary', _ => null);
+        });
     });
 }, 2000);
