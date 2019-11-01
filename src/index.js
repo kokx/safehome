@@ -29,8 +29,27 @@ app.get('/image', (req, res) => {
 
 app.listen(5000, () => console.log('Listening...'));
 
+let lastError = '';
+let noErrors = 0;
+
 setInterval(() => {
-    request(process.env.CAMERA_URL, {encoding: 'binary'}, (_error, _response, body) => {
+    request(process.env.CAMERA_URL, {encoding: 'binary', timeout: 1200}, (error, _response, body) => {
+        if (error) {
+            noErrors = 0;
+            // Only log an error if it is new
+            if (error.code !== lastError) {
+                console.log('Camera likely offline. Reason:', error.code);
+                lastError = error.code;
+            }
+            // in case of error, do not try to save data
+            return;
+        }
+        if (noErrors > 5) {
+            // reset lastError
+            lastError = '';
+        }
+        noErrors++;
+
         date = new Date();
 
         dir = date.getUTCFullYear() + '/'
@@ -42,4 +61,4 @@ setInterval(() => {
             fs.writeFile('data/' + dir + '/' + filename, body, 'binary', _ => null);
         });
     });
-}, 2000);
+}, 1500);
