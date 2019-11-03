@@ -32,13 +32,17 @@ app.listen(5000, () => console.log('Listening...'));
 let lastError = '';
 let noErrors = 0;
 
+const prependZeroes = (num, len) => {
+    return ("0".repeat(len) + num).slice(-1 * len);
+};
+
 setInterval(() => {
     request(process.env.CAMERA_URL, {encoding: 'binary', timeout: 1200}, (error, _response, body) => {
         if (error) {
             noErrors = 0;
             // Only log an error if it is new
             if (error.code !== lastError) {
-                console.log('Camera likely offline. Reason:', error.code);
+                console.log(new Date(), 'Camera likely offline. Reason:', error.code);
                 lastError = error.code;
             }
             // in case of error, do not try to save data
@@ -52,9 +56,9 @@ setInterval(() => {
 
         date = new Date();
 
-        dir = date.getUTCFullYear() + '/'
-            + date.getUTCMonth() + '-' + date.getUTCDate() + '/'
-            + date.getUTCHours();
+        dir = prependZeroes(date.getUTCFullYear(), 4) + '/'
+            + prependZeroes(date.getUTCMonth(), 2) + '-' + prependZeroes(date.getUTCDate(), 2) + '/'
+            + prependZeroes(date.getUTCHours(), 2);
 
         filename = 'cam-' + date.toISOString() + '.jpg';
         fs.mkdir('data/' + dir, { recursive: true }, () => {
